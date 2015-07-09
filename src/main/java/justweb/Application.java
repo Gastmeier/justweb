@@ -2,12 +2,10 @@ package justweb;
 
 import justweb.jetty.client.FiberHttpClient;
 import justweb.jetty.server.JettyHandler;
-import justweb.pico.HttpClientProvider;
-import justweb.pico.JsonMapperProvider;
-import justweb.pico.PebbleEngineProvider;
+import justweb.pico.*;
 import justweb.routing.Routes;
 import justweb.services.EmailService;
-import justweb.services.I18nService;
+import justweb.services.MongoService;
 import justweb.services.PebbleService;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -19,40 +17,52 @@ import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.behaviors.Caching;
 import org.picocontainer.injectors.ProviderAdapter;
 
-public class Application {
+public abstract class Application {
+
+    private final Settings settings = new Settings(appName());
 
     public static MutablePicoContainer PICO = new DefaultPicoContainer(new Caching(), null);
 
+    public void loadSettings() {
+        settings.load("src/main/resources/" + appName().toLowerCase() + ".properties");
+        settings.loadOptional("src/main/resources/" + appName().toLowerCase() + "_local.properties");
+    }
+
     public void initServices() {
-        PICO.addComponent(this);
+        PICO.addComponent(settings);
         PICO.addComponent(JettyHandler.class);
         PICO.addComponent(Routes.class);
+        PICO.addAdapter(new ProviderAdapter(new MongoClientProvider()));
+        PICO.addAdapter(new ProviderAdapter(new MongoDatabaseProvider()));
+        PICO.addComponent(MongoService.class);
         PICO.addAdapter(new ProviderAdapter(new PebbleEngineProvider()));
         PICO.addComponent(PebbleService.class);
         PICO.addAdapter(new ProviderAdapter(new JsonMapperProvider()));
         PICO.addComponent(EmailService.class);
-        PICO.addComponent(I18nService.class);
+        PICO.addAdapter(new ProviderAdapter(new I18nProvider()));
 
-        if (initHttpClient()) {
+
+        if (settings.initHttpClient()) {
             PICO.addAdapter(new ProviderAdapter(new HttpClientProvider()));
             PICO.addComponent(FiberHttpClient.class);
         }
     }
 
     public void run() {
+        loadSettings();
         initServices();
 
         Server server = new Server();
         ServerConnector connector = new ServerConnector(server);
-        connector.setHost("localhost");
-        connector.setPort(7070);
-        connector.setIdleTimeout(30000);
+        connector.setHost(settings.serverHost());
+        connector.setPort(settings.serverPort());
+        connector.setIdleTimeout(settings.serverIdleTimeout());
         server.addConnector(connector);
 
         JettyHandler appHandler = PICO.getComponent(JettyHandler.class);
 
         ResourceHandler resourceHandler = new ResourceHandler();
-        resourceHandler.setResourceBase(assetsPath());
+        resourceHandler.setResourceBase(settings.assetsPath());
 
         HandlerList handlers = new HandlerList();
         handlers.setHandlers(new Handler[]{appHandler, resourceHandler});
@@ -69,8 +79,6 @@ public class Application {
         }
     }
 
-    public boolean initHttpClient() { return false; }
-    public String translations() { return "translations/translations"; }
-    public String assetsPath() { return "src/main/resources/assets"; }
+    public abstract String appName();
 
 }

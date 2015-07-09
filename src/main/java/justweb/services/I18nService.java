@@ -1,20 +1,18 @@
 package justweb.services;
 
-import justweb.Application;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class I18nService {
 
-    private final Application app;
+    private final String bundle;
 
-    public I18nService(Application app) {
-        this.app = app;
+    public I18nService(String bundle) {
+        this.bundle = bundle;
     }
 
-    public ResourceBundle get(Locale language) { return ResourceBundle.getBundle(app.translations(), language); }
+    public ResourceBundle get(Locale language) { return ResourceBundle.getBundle(bundle, language); }
     public String trans(Locale language, String key) { return get(language).getString(key); }
     public Locale lang(HttpServletRequest request) { return request.getLocale(); }
 
