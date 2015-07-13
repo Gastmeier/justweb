@@ -4,11 +4,11 @@ import org.eclipse.jetty.server.Server;
 
 public abstract class Application<SettingsType extends Settings, RegistryType extends Registry> {
 
-    private final Settings settings = newSettings();
-    private final Registry registry = newRegistry();
+    public final SettingsType settings = newSettings();
+    public final RegistryType registry = newRegistry(settings);
 
     protected abstract SettingsType newSettings();
-    protected abstract RegistryType newRegistry();
+    protected abstract RegistryType newRegistry(SettingsType settings);
 
     public void loadSettings() {
         settings.load("src/main/resources/" + settings.appName().toLowerCase() + ".properties");

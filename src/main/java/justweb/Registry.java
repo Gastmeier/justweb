@@ -20,7 +20,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 
-public class Registry<SettingsType extends Settings> {
+public abstract class Registry<SettingsType extends Settings> {
 
     private final SettingsType settings;
 
@@ -68,10 +68,13 @@ public class Registry<SettingsType extends Settings> {
     public Routes routes() {
         if (routes == null) {
             routes = new Routes();
+            addRoutes(routes);
         }
 
         return routes;
     }
+
+    protected abstract void addRoutes(Routes routes);
 
     public JettyHandler jettyHandler() {
         if (jettyHandler == null) {
