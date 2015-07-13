@@ -12,11 +12,11 @@ import org.eclipse.jetty.client.util.BufferingResponseListener;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-public class FiberHttpClient {
+public class FiberJettyHttpClient {
 
     private final HttpClient client;
 
-    public FiberHttpClient(HttpClient client) {
+    public FiberJettyHttpClient(HttpClient client) {
         this.client = client;
     }
 

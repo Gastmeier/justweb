@@ -23,7 +23,6 @@ dependencies {
     compile group: 'org.mongodb', name: 'mongodb-driver-async', version: '3.0.2'
     compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.3.0.v20150612'
     compile group: 'org.eclipse.jetty', name: 'jetty-client', version: '9.3.0.v20150612'
-    compile group: 'org.picocontainer', name: 'picocontainer', version: '2.15'
     compile group: 'com.mitchellbosecke', name: 'pebble', version: '1.5.0'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.5.1'
     compile group: 'javax.mail', name: 'mail', version: '1.4.7'
