@@ -3,7 +3,6 @@ package justweb.http;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
-import org.joda.time.DateTime;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -26,7 +25,7 @@ public class TextResult extends Result {
 
         response.headers().add(HttpHeaders.Names.CONTENT_LENGTH, lengthUtf8);
         response.headers().add(HttpHeaders.Names.CONTENT_TYPE, "text/plain; charset=UTF-8");
-        response.headers().add(HttpHeaders.Names.DATE, RFC1123_DATE_TIME_FORMATTER.print(new DateTime()));
+//        response.headers().add(HttpHeaders.Names.DATE, RFC1123_DATE_TIME_FORMATTER.print(new DateTime()));
 
         return response;
     }

@@ -1,7 +1,6 @@
 package justweb.http;
 
 import io.netty.handler.codec.http.*;
-import org.joda.time.DateTime;
 
 public class BodylessResult extends Result<Object> {
 
@@ -12,7 +11,7 @@ public class BodylessResult extends Result<Object> {
     @Override
     public FullHttpResponse createNettyResponse() {
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, getStatus());
-        response.headers().add(HttpHeaders.Names.DATE, RFC1123_DATE_TIME_FORMATTER.print(new DateTime()));
+//        response.headers().add(HttpHeaders.Names.DATE, RFC1123_DATE_TIME_FORMATTER.print(new DateTime()));
         return response;
     }
 

@@ -2,16 +2,12 @@ package justweb.http;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.util.Locale;
 
 public abstract class Result<BodyType> {
 
-    public static final DateTimeFormatter RFC1123_DATE_TIME_FORMATTER =
-            DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'")
-                    .withZoneUTC().withLocale(Locale.US);
+//    public static final DateTimeFormatter RFC1123_DATE_TIME_FORMATTER =
+//            DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'")
+//                    .withZoneUTC().withLocale(Locale.US);
 
     private final HttpResponseStatus status;
     private final BodyType body;

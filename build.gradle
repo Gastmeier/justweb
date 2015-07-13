@@ -26,7 +26,6 @@ dependencies {
     compile group: 'org.picocontainer', name: 'picocontainer', version: '2.15'
     compile group: 'com.mitchellbosecke', name: 'pebble', version: '1.5.0'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.5.1'
-    compile group: 'joda-time', name: 'joda-time', version: '2.7'
     compile group: 'javax.mail', name: 'mail', version: '1.4.7'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
 

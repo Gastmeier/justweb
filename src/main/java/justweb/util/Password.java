@@ -9,6 +9,11 @@ import java.security.SecureRandom;
 
 public class Password {
 
+    /**
+     * A salt is used as an additional input to a one-way hash function for hashing a password. It defends against
+     * dictionary and rainbow attacks.
+     * @return The newly created salt.
+     */
     public static byte[] createSalt() {
         try {
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG");

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public abstract class JsonRoute implements Route {
-    private final ObjectMapper jsonMapper;
+    protected final ObjectMapper jsonMapper;
 
     protected JsonRoute(ObjectMapper jsonMapper) {
         this.jsonMapper = jsonMapper;
