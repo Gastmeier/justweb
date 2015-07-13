@@ -14,20 +14,23 @@ public class I18nService {
 
     public ResourceBundle get(Locale language) { return ResourceBundle.getBundle(bundle, language); }
     public String trans(Locale language, String key) { return get(language).getString(key); }
+    public String trans(HttpServletRequest request, String key) { return get(lang(request)).getString(key); }
     public Locale lang(HttpServletRequest request) { return request.getLocale(); }
 
-    public Translator translator(HttpServletRequest request) {
-        return new Translator(request);
-    }
+    public Bound bind(Locale lang) { return new Bound(lang); }
+    public Bound bind(HttpServletRequest request) { return new Bound(request); }
 
-    public class Translator {
-        private final Locale lang;
+    public class Bound {
+        public final Locale lang;
 
-        public Translator(HttpServletRequest request) {
-            this.lang = I18nService.this.lang(request);
+        private Bound(Locale lang) {
+            this.lang = lang;
         }
 
-        public Locale lang() { return lang; }
+        private Bound(HttpServletRequest request) {
+            this(I18nService.this.lang(request));
+        }
+
         public ResourceBundle get() { return I18nService.this.get(lang); }
         public String trans(String key) { return I18nService.this.trans(lang, key); }
     }

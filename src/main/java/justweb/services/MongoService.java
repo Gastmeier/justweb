@@ -7,12 +7,13 @@ import com.mongodb.async.client.FindIterable;
 import com.mongodb.async.client.MongoCollection;
 import com.mongodb.async.client.MongoDatabase;
 import com.mongodb.async.client.MongoIterable;
+import com.mongodb.client.result.UpdateResult;
 import justweb.AppException;
 import justweb.util.Holder;
+import justweb.util.SuspendableConsumer;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import javax.print.Doc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -61,11 +62,7 @@ public class MongoService {
 
     @Suspendable
     public Document findFirst(String collectionName, Bson filter) {
-        return async(callback -> {
-            MongoCollection<Document> collection = db.getCollection(collectionName);
-            FindIterable<Document> finder = collection.find(filter);
-            finder.first(callback);
-        });
+        return async(callback -> coll(collectionName).find(filter).first(callback));
     }
 
     @Suspendable
@@ -91,7 +88,19 @@ public class MongoService {
     }
 
     @Suspendable
-    private <TResult> TResult async(Consumer<MongoAsync<TResult>> requestAsync) {
+    public void insert(String collectionName, Document document) {
+        asyncVoid(callback -> coll(collectionName).insertOne(document, callback));
+    }
+
+    @Suspendable
+    public void updateOne(String collectionName, Bson filter, Bson fields) {
+        Bson update = new Document("$set", fields);
+        UpdateResult result = async(callback -> coll(collectionName).updateOne(filter, update, callback));
+        // TODO: do something with the result
+    }
+
+    @Suspendable
+    private <TResult> TResult async(SuspendableConsumer<MongoAsync<TResult>> requestAsync) {
         TResult result = null;
 
         try {
@@ -102,7 +111,7 @@ public class MongoService {
                 }
             }.run();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            // TODO: was interrupted, what now?
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -111,7 +120,7 @@ public class MongoService {
     }
 
     @Suspendable
-    private void asyncVoid(Consumer<MongoAsync<Void>> requestAsync) {
+    private void asyncVoid(SuspendableConsumer<MongoAsync<Void>> requestAsync) {
         async(requestAsync);
     }
 
@@ -128,6 +137,10 @@ public class MongoService {
                 asyncCompleted(null);
             }
         }
+    }
+
+    protected MongoCollection<Document> coll(String collectionName) {
+        return db.getCollection(collectionName);
     }
 
 }

@@ -4,19 +4,18 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
-import justweb.http.Request;
 import justweb.http.Result;
-import justweb.routing.Routes;
+import justweb.urlmapper.UrlMappers;
 
 public class DefaultServerHandler extends SimpleChannelInboundHandler<Object> {
 
-    private final Routes routes;
+    private final UrlMappers urlMappers;
     private HttpRequest request;
     private byte[] body = null;
     private int index = 0;
 
-    public DefaultServerHandler(Routes routes) {
-        this.routes = routes;
+    public DefaultServerHandler(UrlMappers urlMappers) {
+        this.urlMappers = urlMappers;
     }
 
     @Override
@@ -58,7 +57,7 @@ public class DefaultServerHandler extends SimpleChannelInboundHandler<Object> {
             if (content instanceof LastHttpContent) {
                 LastHttpContent lastContent = (LastHttpContent) content;
 
-                Result result = null;//routes.handle(new Request(request), body);
+                Result result = null;//urlMappers.handle(new Request(request), body);
                 FullHttpResponse response = result.createNettyResponse();
                 ctx.write(response);
             }

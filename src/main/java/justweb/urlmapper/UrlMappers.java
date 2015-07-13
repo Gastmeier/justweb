@@ -1,4 +1,4 @@
-package justweb.routing;
+package justweb.urlmapper;
 
 import co.paralleluniverse.fibers.SuspendExecution;
 
@@ -7,17 +7,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Routes {
+public class UrlMappers {
 
-    private List<Route> routes = new ArrayList<>();
+    private List<UrlMapper> mappers = new ArrayList<>();
 
-    public void add(Route route) { routes.add(route); }
+    public void add(UrlMapper mapper) { mappers.add(mapper); }
 
     public boolean handle(HttpServletRequest request, HttpServletResponse response)
             throws SuspendExecution {
-        for (Route route : routes)
-            if (route.applies(request)) {
-                route.handle(request, response);
+        for (UrlMapper mapper : mappers)
+            if (mapper.handle(request, response)) {
                 return true;
             }
         return false;

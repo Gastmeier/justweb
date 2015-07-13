@@ -8,7 +8,7 @@ import com.mongodb.async.client.MongoClients;
 import com.mongodb.async.client.MongoDatabase;
 import justweb.jetty.client.FiberJettyHttpClient;
 import justweb.jetty.server.JettyHandler;
-import justweb.routing.Routes;
+import justweb.urlmapper.UrlMappers;
 import justweb.services.EmailService;
 import justweb.services.I18nService;
 import justweb.services.MongoService;
@@ -25,7 +25,7 @@ public abstract class Registry<SettingsType extends Settings> {
     private final SettingsType settings;
 
     private Server jettyServer;
-    private Routes routes;
+    private UrlMappers urlMappers;
     private JettyHandler jettyHandler;
     private I18nService i18nService;
     private EmailService emailService;
@@ -65,20 +65,20 @@ public abstract class Registry<SettingsType extends Settings> {
         return jettyServer;
     }
 
-    public Routes routes() {
-        if (routes == null) {
-            routes = new Routes();
-            addRoutes(routes);
+    public UrlMappers urlMappers() {
+        if (urlMappers == null) {
+            urlMappers = new UrlMappers();
+            addUrlMappers(urlMappers);
         }
 
-        return routes;
+        return urlMappers;
     }
 
-    protected abstract void addRoutes(Routes routes);
+    protected abstract void addUrlMappers(UrlMappers urlMappers);
 
     public JettyHandler jettyHandler() {
         if (jettyHandler == null) {
-            jettyHandler = new JettyHandler(routes());
+            jettyHandler = new JettyHandler(urlMappers());
         }
 
         return jettyHandler;
