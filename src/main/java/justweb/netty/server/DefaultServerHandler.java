@@ -57,7 +57,7 @@ public class DefaultServerHandler extends SimpleChannelInboundHandler<Object> {
             if (content instanceof LastHttpContent) {
                 LastHttpContent lastContent = (LastHttpContent) content;
 
-                Result result = null;//urlMappers.handle(new Request(request), body);
+                Result result = null;//urlMapper.handle(new Request(request), body);
                 FullHttpResponse response = result.createNettyResponse();
                 ctx.write(response);
             }

@@ -8,11 +8,11 @@ import com.mongodb.async.client.MongoClients;
 import com.mongodb.async.client.MongoDatabase;
 import justweb.jetty.client.FiberJettyHttpClient;
 import justweb.jetty.server.JettyHandler;
-import justweb.urlmapper.UrlMappers;
 import justweb.services.EmailService;
 import justweb.services.I18nService;
 import justweb.services.MongoService;
 import justweb.services.PebbleService;
+import justweb.urlmapper.UrlMapper;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -25,7 +25,6 @@ public abstract class Registry<SettingsType extends Settings> {
     private final SettingsType settings;
 
     private Server jettyServer;
-    private UrlMappers urlMappers;
     private JettyHandler jettyHandler;
     private I18nService i18nService;
     private EmailService emailService;
@@ -65,20 +64,11 @@ public abstract class Registry<SettingsType extends Settings> {
         return jettyServer;
     }
 
-    public UrlMappers urlMappers() {
-        if (urlMappers == null) {
-            urlMappers = new UrlMappers();
-            addUrlMappers(urlMappers);
-        }
-
-        return urlMappers;
-    }
-
-    protected abstract void addUrlMappers(UrlMappers urlMappers);
+    public abstract UrlMapper urlMapper();
 
     public JettyHandler jettyHandler() {
         if (jettyHandler == null) {
-            jettyHandler = new JettyHandler(urlMappers());
+            jettyHandler = new JettyHandler(urlMapper());
         }
 
         return jettyHandler;

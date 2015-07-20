@@ -2,7 +2,7 @@ package justweb.jetty.server;
 
 import co.paralleluniverse.fibers.Fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
-import justweb.urlmapper.UrlMappers;
+import justweb.urlmapper.UrlMapper;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
@@ -14,10 +14,10 @@ import java.util.concurrent.ExecutionException;
 
 public class JettyHandler extends AbstractHandler {
 
-    private final UrlMappers urlMappers;
+    private final UrlMapper urlMapper;
 
-    public JettyHandler(UrlMappers urlMappers) {
-        this.urlMappers = urlMappers;
+    public JettyHandler(UrlMapper urlMapper) {
+        this.urlMapper = urlMapper;
     }
 
     @Override
@@ -27,7 +27,7 @@ public class JettyHandler extends AbstractHandler {
             Fiber<Boolean> fiber = new Fiber<Boolean>() {
                 @Override
                 protected Boolean run() throws SuspendExecution, InterruptedException {
-                    return urlMappers.handle(request, response);
+                    return urlMapper.handle(request, response);
                 }
             }.start();
 

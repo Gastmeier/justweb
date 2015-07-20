@@ -6,6 +6,10 @@ import java.lang.Object;import java.lang.RuntimeException;import java.lang.Strin
         super(message);
     }
 
+    public AppException(Throwable cause) {
+        super(cause);
+    }
+
     public AppException(String message, Throwable cause) {
         super(message, cause);
     }
