@@ -2,14 +2,20 @@ package justweb.models;
 
 import justweb.AppException;
 import justweb.util.Password;
+import org.bson.Document;
 
 import java.util.Base64;
 
-public class User {
+public class User extends Model {
+
+    public static final String JP_EMAIL = "email";
+    public static final String JP_PASSWORD = "password";
+    public static final String JP_ACTIVATION = "activation";
 
     private String email;
     private String password;
-    private String salt;
+    private String activation;
+    private String salt; // TODO: obsolete?
 
     public void setPassword(String password) {
         AppException.ifNull(password, "password");
@@ -31,4 +37,12 @@ public class User {
         return password.equals(b64Password);
     }
 
+    @Override
+    public Document toMongoDoc() {
+        Document doc = super.toMongoDoc();
+        doc.append(User.JP_EMAIL, email);
+        doc.append(User.JP_PASSWORD, password);
+        doc.append(User.JP_ACTIVATION, activation);
+        return doc;
+    }
 }
