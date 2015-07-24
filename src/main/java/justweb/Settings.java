@@ -4,22 +4,23 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Properties;
 import java.util.function.Function;
 
-public abstract class Settings {
+public abstract class Settings<AppType extends Application> {
 
+    protected final AppType app;
     private final Properties properties;
 
-    public Settings() {
+    public Settings(AppType app) {
+        this.app = app;
         this.properties = new Properties();
     }
 
-    public abstract String appName();
     public String serverHost() { return str("server.host", "localhost"); }
     public int serverPort() { return integer("server.port", 7070); }
     public int serverIdleTimeout() { return integer("server.idleTimeOut", 30000); }
-    public String dbName() { return str("db.name", appName()); }
+    public String dbName() { return str("db.name", app.name()); }
     public boolean initHttpClient() { return bool("httpClient.init", false); }
     public String i18nBundle() { return str("i18n.bundle", "translations/translations"); }
     public String assetsPath() { return str("assets.path", "src/main/resources/assets"); }

@@ -3,6 +3,7 @@ package justweb.models;
 import justweb.AppException;
 import justweb.util.Password;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 
 import java.util.Base64;
 
@@ -16,6 +17,10 @@ public class User extends Model {
     private String password;
     private String activation;
     private String salt; // TODO: obsolete?
+
+    public User(ObjectId id) {
+        super(id);
+    }
 
     public void setPassword(String password) {
         AppException.ifNull(password, "password");

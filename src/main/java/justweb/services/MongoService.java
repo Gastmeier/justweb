@@ -47,16 +47,21 @@ public class MongoService {
     }
 
     @Suspendable
-    public List<Document> find(String collectionName, Bson filter) {
+    public List<Document> find(String collectionName, Bson filter, Bson projection) {
         Holder<List<Document>> found = new Holder<>(new ArrayList<>());
 
         asyncVoid(callback -> {
             MongoCollection<Document> collection = db.getCollection(collectionName);
-            FindIterable<Document> finder = collection.find(filter);
+            FindIterable<Document> finder = collection.find(filter).projection(projection);
             finder.forEach(document -> found.get().add(document), callback);
         });
 
         return found.get();
+    }
+
+    @Suspendable
+    public List<Document> find(String collectionName, Bson filter) {
+        return find(collectionName, filter, null);
     }
 
     @Suspendable
@@ -92,8 +97,7 @@ public class MongoService {
     }
 
     @Suspendable
-    public void updateOne(String collectionName, Bson filter, Bson fields) {
-        Bson update = new Document("$set", fields);
+    public void updateOne(String collectionName, Bson filter, Bson update) {
         UpdateResult result = async(callback -> coll(collectionName).updateOne(filter, update, callback));
         // TODO: do something with the result
     }

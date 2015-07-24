@@ -9,10 +9,6 @@ public abstract class Model {
 
     public final ObjectId id;
 
-    public Model() {
-        this.id = ObjectId.get();
-    }
-
     public Model(ObjectId id) {
         this.id = id;
     }

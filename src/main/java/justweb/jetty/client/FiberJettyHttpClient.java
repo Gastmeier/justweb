@@ -8,23 +8,25 @@ import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Result;
 import org.eclipse.jetty.client.util.BufferingResponseListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class FiberJettyHttpClient {
 
-    private final HttpClient client;
+    private final Logger log = LoggerFactory.getLogger(getClass());
+    protected final HttpClient client;
 
     public FiberJettyHttpClient(HttpClient client) {
         this.client = client;
     }
 
-    public HttpClient jetty() { return client; }
-
     @Suspendable
     public ContentResponse send(Request request)
             throws InterruptedException, TimeoutException, ExecutionException {
+        log.info("Requesting from URL: {}", request.getURI());
         try {
             return new SendAsync(request).run();
         } catch (Throwable throwable) {

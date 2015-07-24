@@ -15,22 +15,20 @@ public abstract class Dao<ModelType extends Model> {
 
     protected final MongoService mongo;
 
-    protected Dao(MongoService mongo) {
+    public Dao(MongoService mongo) {
         this.mongo = mongo;
     }
 
     public abstract String collection();
     public abstract ModelType fromMongoDoc(Document doc);
 
-    public ModelType[] fromMongoList(List<Document> docs) {
-        ModelType[] array = (ModelType[]) new Object[docs.size()];
-        for (int i = 0; i < docs.size(); i++)
-            array[i] = fromMongoDoc(docs.get(i));
-        return array;
+    @Suspendable
+    public void createCollection() {
+        mongo.createCollection(collection());
     }
 
     @Suspendable
-    public ModelType[] all() {
+    public List<ModelType> all() {
         return fromMongoList(mongo.find(collection(), null));
     }
 
@@ -40,8 +38,14 @@ public abstract class Dao<ModelType extends Model> {
     }
 
     @Suspendable
-    public void update(ModelType model, Bson fields) {
-        mongo.updateOne(collection(), eq(Model.JP_ID, model.id), fields);
+    public void update(ModelType model, Bson update) {
+        mongo.updateOne(collection(), eq(Model.JP_ID, model.id), update);
     }
 
+    public List<ModelType> fromMongoList(List<Document> docs) {
+        List<ModelType> converted = new ArrayList<>(docs.size());
+        for (Document doc : docs)
+            converted.add(fromMongoDoc(doc));
+        return converted;
+    }
 }

@@ -8,10 +8,7 @@ import com.mongodb.async.client.MongoClients;
 import com.mongodb.async.client.MongoDatabase;
 import justweb.jetty.client.FiberJettyHttpClient;
 import justweb.jetty.server.JettyHandler;
-import justweb.services.EmailService;
-import justweb.services.I18nService;
-import justweb.services.MongoService;
-import justweb.services.PebbleService;
+import justweb.services.*;
 import justweb.urlmapper.UrlMapper;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.server.Handler;
@@ -20,12 +17,14 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 
-public abstract class Registry<SettingsType extends Settings> {
+public abstract class Registry<AppType extends Application, SettingsType extends Settings> {
 
-    private final SettingsType settings;
+    protected final AppType app;
+    protected final SettingsType settings;
 
     private Server jettyServer;
     private JettyHandler jettyHandler;
+    private UrlService urlService;
     private I18nService i18nService;
     private EmailService emailService;
     private MongoClient mongoClient;
@@ -37,9 +36,12 @@ public abstract class Registry<SettingsType extends Settings> {
     private HttpClient jettyHttpClient;
     private FiberJettyHttpClient fiberJettyHttpClient;
 
-    public Registry(SettingsType settings) {
-        this.settings = settings;
+    public Registry(AppType app) {
+        this.app = app;
+        this.settings = (SettingsType) app.settings;
     }
+
+    public abstract UrlMapper urlMapper();
 
     public Server jettyServer() {
         if (jettyServer == null) {
@@ -64,14 +66,20 @@ public abstract class Registry<SettingsType extends Settings> {
         return jettyServer;
     }
 
-    public abstract UrlMapper urlMapper();
-
     public JettyHandler jettyHandler() {
         if (jettyHandler == null) {
             jettyHandler = new JettyHandler(urlMapper());
         }
 
         return jettyHandler;
+    }
+
+    public UrlService urlService() {
+        if (urlService == null) {
+            urlService = new UrlService(settings);
+        }
+
+        return urlService;
     }
 
     public I18nService i18nService() {

@@ -5,32 +5,19 @@ import org.eclipse.jetty.server.Server;
 public abstract class Application<SettingsType extends Settings, RegistryType extends Registry> {
 
     public final SettingsType settings = newSettings();
-    public final RegistryType registry = newRegistry(settings);
+    public final RegistryType registry = newRegistry();
 
-    private String baseUrl;
-    private String baseUrlSecure;
-
+    public abstract String name();
     protected abstract SettingsType newSettings();
-    protected abstract RegistryType newRegistry(SettingsType settings);
-
-    public String baseUrl(boolean secure) {
-        return secure ? baseUrlSecure : baseUrl;
-    }
+    protected abstract RegistryType newRegistry();
 
     protected void init() {
         loadSettings();
-
-        String port = "";
-        if (settings.serverPort() != 80)
-            baseUrl += ":" + String.valueOf(settings.serverPort());
-
-        baseUrl = "http://" + settings.serverHost() + port;
-        baseUrlSecure = "https://" + settings.serverHost() + port;
     }
 
     protected void loadSettings() {
-        settings.load("src/main/resources/" + settings.appName().toLowerCase() + ".properties");
-        settings.loadOptional("src/main/resources/" + settings.appName().toLowerCase() + "_local.properties");
+        settings.load("src/main/resources/" + name().toLowerCase() + ".properties");
+        settings.loadOptional("src/main/resources/" + name().toLowerCase() + "_local.properties");
     }
 
     public void run() {
