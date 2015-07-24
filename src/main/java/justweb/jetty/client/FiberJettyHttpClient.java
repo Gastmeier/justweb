@@ -17,10 +17,14 @@ import java.util.concurrent.TimeoutException;
 public class FiberJettyHttpClient {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
-    protected final HttpClient client;
+    private final HttpClient client;
 
     public FiberJettyHttpClient(HttpClient client) {
         this.client = client;
+    }
+
+    public HttpClient jetty() {
+        return client;
     }
 
     @Suspendable
